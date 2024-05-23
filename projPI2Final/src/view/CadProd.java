@@ -21,7 +21,6 @@ public final class CadProd extends javax.swing.JInternalFrame {
         //Define o limite
         textId.setDocument(new LimitaCaracteres(10));
         textProduto.setDocument(new LimitaCaracteres(100));
-        textTipoProd.setDocument(new LimitaCaracteres(10));
         textQtProd.setDocument(new LimitaCaracteres(10));
         textVlCompra.setDocument(new LimitaCaracteres(20));
         textIcms.setDocument(new LimitaCaracteres(10));
@@ -55,8 +54,8 @@ public final class CadProd extends javax.swing.JInternalFrame {
         jScrollPane2 = new javax.swing.JScrollPane();
         tblProduto = new javax.swing.JTable();
         textId = new javax.swing.JTextField();
-        textTipoProd = new javax.swing.JTextField();
         textVlCompra = new javax.swing.JTextField();
+        cmbTipo = new javax.swing.JComboBox<>();
 
         setClosable(true);
         setIconifiable(true);
@@ -295,14 +294,6 @@ public final class CadProd extends javax.swing.JInternalFrame {
         });
         jPanel1.add(textId, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 50, 130, 25));
 
-        textTipoProd.setToolTipText("Permitido apenas letra Maiúscula");
-        textTipoProd.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyTyped(java.awt.event.KeyEvent evt) {
-                textTipoProdKeyTyped(evt);
-            }
-        });
-        jPanel1.add(textTipoProd, new org.netbeans.lib.awtextra.AbsoluteConstraints(526, 105, 144, 25));
-
         textVlCompra.setToolTipText("Permitido apenas número");
         textVlCompra.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent evt) {
@@ -310,6 +301,9 @@ public final class CadProd extends javax.swing.JInternalFrame {
             }
         });
         jPanel1.add(textVlCompra, new org.netbeans.lib.awtextra.AbsoluteConstraints(526, 160, 144, 25));
+
+        cmbTipo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "UN", "SC", "MT", "RL", "POL", "CM", "MM" }));
+        jPanel1.add(cmbTipo, new org.netbeans.lib.awtextra.AbsoluteConstraints(526, 105, 144, 25));
 
         getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, -1));
         jPanel1.getAccessibleContext().setAccessibleName("");
@@ -403,13 +397,6 @@ public final class CadProd extends javax.swing.JInternalFrame {
         }
     }//GEN-LAST:event_textIdKeyTyped
 
-    private void textTipoProdKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_textTipoProdKeyTyped
-        String caracter = "ABCDEFGHIJKLMNOPQRSTUVXZWY";
-        if (!caracter.contains(evt.getKeyChar() + "")) {
-            evt.consume();
-        }
-    }//GEN-LAST:event_textTipoProdKeyTyped
-
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     public static javax.swing.JButton btnUserDel;
@@ -418,6 +405,7 @@ public final class CadProd extends javax.swing.JInternalFrame {
     private javax.swing.JButton btnUserRegister;
     private javax.swing.JButton btnUserSearch;
     private javax.swing.JComboBox<String> cmbCategoria;
+    private javax.swing.JComboBox<String> cmbTipo;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JLabel lblCategoriaProd;
@@ -434,7 +422,6 @@ public final class CadProd extends javax.swing.JInternalFrame {
     private javax.swing.JTextField textId;
     private javax.swing.JTextField textProduto;
     private javax.swing.JTextField textQtProd;
-    private javax.swing.JTextField textTipoProd;
     private javax.swing.JTextField textVlCompra;
     private javax.swing.JTextField textVlVenda;
     // End of variables declaration//GEN-END:variables
@@ -486,7 +473,7 @@ public final class CadProd extends javax.swing.JInternalFrame {
                 this.textId.setText(resul.getString("idProduto"));
                 this.cmbCategoria.setSelectedItem(resul.getString("Categoria"));
                 this.textProduto.setText(resul.getString("produto"));
-                this.textTipoProd.setText(resul.getString("tipo"));
+                this.cmbTipo.setSelectedItem(resul.getString("tipo"));
                 this.textQtProd.setText(String.valueOf(resul.getInt("quantidade")));
                 this.textVlCompra.setText(String.valueOf(resul.getFloat("vlCompra")));
                 this.textIcms.setText(String.valueOf(resul.getFloat("icms")));
@@ -509,12 +496,11 @@ public final class CadProd extends javax.swing.JInternalFrame {
     }
 
     private void cadastrarProd() {
-
         mod.setIdProduto(textId.getText());
         mod.setCategoria(cmbCategoria.getSelectedItem().toString());
         mod.setProduto(textProduto.getText());
-        mod.setTipo(textTipoProd.getText());
-        if (textId.getText().isEmpty() || textProduto.getText().isEmpty() || textTipoProd.getText().isEmpty()) {
+        mod.setTipo(cmbTipo.getSelectedItem().toString());
+        if (textId.getText().isEmpty() || textProduto.getText().isEmpty()) {
             JOptionPane.showMessageDialog(null, "Preencha os campos obrigatórios!");
         } else {
             /*Trata do erro gerado pelo campo está vazio*/
@@ -536,7 +522,7 @@ public final class CadProd extends javax.swing.JInternalFrame {
         mod.setIdProduto(textId.getText());
         mod.setCategoria(cmbCategoria.getSelectedItem().toString());
         mod.setProduto(textProduto.getText());
-        mod.setTipo(textTipoProd.getText());
+        mod.setTipo(cmbTipo.getSelectedItem().toString());
         mod.setQuantidade(Integer.parseInt(textQtProd.getText()));
         mod.setVlCompra(Float.parseFloat(textVlCompra.getText()));
         mod.setIcms(Float.parseFloat(textIcms.getText()));
@@ -585,7 +571,7 @@ public final class CadProd extends javax.swing.JInternalFrame {
             if (conecta.rs.next()) {
                 cmbCategoria.setSelectedItem(conecta.rs.getString("categoria"));
                 textProduto.setText(conecta.rs.getString("produto"));
-                textTipoProd.setText(conecta.rs.getString("tipo"));
+                cmbTipo.setSelectedItem(conecta.rs.getString("tipo"));
                 textQtProd.setText(String.valueOf(conecta.rs.getInt("quantidade")));
                 textVlCompra.setText(String.valueOf(conecta.rs.getFloat("vlCompra")));
                 textIcms.setText(String.valueOf(conecta.rs.getFloat("icms")));
@@ -620,7 +606,6 @@ public final class CadProd extends javax.swing.JInternalFrame {
     public void limparCampos() {
         textId.setText(null);
         textProduto.setText(null);
-        textTipoProd.setText(null);
         textQtProd.setText(null);
         textVlCompra.setText(null);
         textIcms.setText(null);
@@ -640,7 +625,7 @@ public final class CadProd extends javax.swing.JInternalFrame {
         textId.setEnabled(false);
         cmbCategoria.setEnabled(false);
         textProduto.setEnabled(false);
-        textTipoProd.setEnabled(false);
+        cmbTipo.setEnabled(false);
         textQtProd.setEnabled(false);
         textVlCompra.setEnabled(false);
         textIcms.setEnabled(false);
@@ -657,7 +642,7 @@ public final class CadProd extends javax.swing.JInternalFrame {
         textId.setEnabled(true);
         cmbCategoria.setEnabled(true);
         textProduto.setEnabled(true);
-        textTipoProd.setEnabled(true);
+        cmbTipo.setEnabled(true);
         textQtProd.setEnabled(true);
         textVlCompra.setEnabled(true);
         textIcms.setEnabled(true);
