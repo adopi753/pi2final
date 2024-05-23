@@ -14,7 +14,7 @@ public final class CadUser extends javax.swing.JInternalFrame {
     ConectarDaoFinal conecta = new ConectarDaoFinal();
     UsuarioDaoFinal dao = new UsuarioDaoFinal();
     UsuarioModFinal mod = new UsuarioModFinal();
-    
+
     public CadUser() {
         initComponents();
         camposBotoesInicioCadastro();
@@ -27,9 +27,9 @@ public final class CadUser extends javax.swing.JInternalFrame {
         textComplemento.setDocument(new LimitaCaracteres(50));
         textBairro.setDocument(new LimitaCaracteres(80));
         textCidade.setDocument(new LimitaCaracteres(80));
-        textEstado.setDocument(new LimitaCaracteres(2));        
+        textEstado.setDocument(new LimitaCaracteres(2));
     }
-   
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -524,10 +524,10 @@ public final class CadUser extends javax.swing.JInternalFrame {
                     resul.getString("bairro"),
                     resul.getString("cidade"),
                     resul.getString("estado")};
-                
+
                 jtablemodel.addRow(linhas);
             }
-            
+
             textCpf.grabFocus();
         } catch (SQLException err) {
             JOptionPane.showMessageDialog(null, "Modulo carregarUsers\nErro ao carregar Users\n" + err.getMessage());
@@ -614,20 +614,12 @@ public final class CadUser extends javax.swing.JInternalFrame {
         mod.setBairro(textBairro.getText());
         mod.setCidade(textCidade.getText());
         mod.setEstado(textEstado.getText());
-        
+
         conecta.rs = dao.buscar(mod);
         try {
             if (conecta.rs.next()) {
-                if (textCpf.getText().isEmpty() || textNome.getText().isEmpty() || textCelular.getText().isEmpty()
-                        || textEmail.getText().isEmpty() || textSenha.getText().isEmpty() || textRua.getText().isEmpty()
-                        || textNumRua.getText().isEmpty() || textBairro.getText().isEmpty() || textCidade.getText().isEmpty()
-                        || textEstado.getText().isEmpty()) {
-                    JOptionPane.showMessageDialog(null, "Preencha os campos obrigatórios!");
-
-                } else { // caso exista chama a função alterar()
-                    dao.alterar(mod);
-                    camposBotoesInicioCadastro();
-                }
+                dao.alterar(mod);
+                camposBotoesInicioCadastro();
             } else {
                 Object[] options = {"Sim", "Não"};
                 int exUser = JOptionPane.showOptionDialog(null, "Usuário não cadastrado!\nDeseja fazer o cadastro?", "Aviso",
@@ -710,7 +702,7 @@ public final class CadUser extends javax.swing.JInternalFrame {
         textNome.setText(null);
         textCelular.setText(null);
         textEmail.setText(null);
-        textSenha.setText(null);       
+        textSenha.setText(null);
         textRua.setText(null);
         textNumRua.setText(null);
         textComplemento.setText(null);
@@ -740,7 +732,7 @@ public final class CadUser extends javax.swing.JInternalFrame {
         textBairro.setEnabled(false);
         textCidade.setEnabled(false);
         textEstado.setEnabled(false);
-        
+
         btnUserNew.setEnabled(true);
         btnUserRegister.setEnabled(false);
         btnUserSearch.setEnabled(false);
