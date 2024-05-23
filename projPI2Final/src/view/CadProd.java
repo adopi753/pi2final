@@ -73,12 +73,12 @@ public final class CadProd extends javax.swing.JInternalFrame {
 
         lblIdProd.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         lblIdProd.setForeground(new java.awt.Color(255, 255, 255));
-        lblIdProd.setText("ID");
+        lblIdProd.setText("*ID:");
         jPanel1.add(lblIdProd, new org.netbeans.lib.awtextra.AbsoluteConstraints(173, 35, -1, -1));
 
         lblCategoriaProd.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         lblCategoriaProd.setForeground(new java.awt.Color(255, 255, 255));
-        lblCategoriaProd.setText("*CATEGORIA");
+        lblCategoriaProd.setText("*CATEGORIA:");
         jPanel1.add(lblCategoriaProd, new org.netbeans.lib.awtextra.AbsoluteConstraints(529, 35, -1, -1));
 
         cmbCategoria.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Alvenaria", "ElÈtrica", "Hidr·ulica", "Pintura", "Pisos" }));
@@ -145,7 +145,7 @@ public final class CadProd extends javax.swing.JInternalFrame {
 
         lblVlVendaProd.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         lblVlVendaProd.setForeground(new java.awt.Color(255, 255, 255));
-        lblVlVendaProd.setText("*VL VENDA");
+        lblVlVendaProd.setText("*VL VENDA:");
         jPanel1.add(lblVlVendaProd, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 200, -1, -1));
 
         textVlVenda.setToolTipText("Permitido apenas n˙meros");
@@ -338,7 +338,7 @@ public final class CadProd extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_btnUserDelActionPerformed
 
     private void textProdutoKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_textProdutoKeyTyped
-        String caracter = "ABC«DEFGHIJKLMNOPQRSTUVXZWY_-¡¬√… Õ”‘’⁄ 0123456789,'";
+        String caracter = "ABC«DEFGHIJKLMNOPQRSTUVXZWY_-¡¬√… Õ”‘’⁄ 0123456789,'+";
         if (!caracter.contains(evt.getKeyChar() + "")) {
             evt.consume();
         }
@@ -509,24 +509,26 @@ public final class CadProd extends javax.swing.JInternalFrame {
     }
 
     private void cadastrarProd() {
+
         mod.setIdProduto(textId.getText());
         mod.setCategoria(cmbCategoria.getSelectedItem().toString());
         mod.setProduto(textProduto.getText());
         mod.setTipo(textTipoProd.getText());
-        mod.setQuantidade(Integer.parseInt(textQtProd.getText()));
-        mod.setVlCompra(Float.parseFloat(textVlCompra.getText()));
-        mod.setIcms(Float.parseFloat(textIcms.getText()));
-        mod.setVlVenda(Float.parseFloat(textVlVenda.getText()));
-
-        if (textId.getText().isEmpty() || textProduto.getText().isEmpty() || textTipoProd.getText().isEmpty()
-                || textQtProd.getText().isEmpty() || textVlCompra.getText().isEmpty() || textIcms.getText().isEmpty()
-                || textVlVenda.getText().isEmpty()) {
-
+        if (textId.getText().isEmpty() || textProduto.getText().isEmpty() || textTipoProd.getText().isEmpty()) {
             JOptionPane.showMessageDialog(null, "Preencha os campos obrigatÛrios!");
-
         } else {
-            dao.incluir(mod);
-            camposBotoesInicioCadastro();
+            /*Trata do erro gerado pelo campo est· vazio*/
+            try {
+                mod.setQuantidade(Integer.parseInt(textQtProd.getText()));
+                mod.setVlCompra(Float.parseFloat(textVlCompra.getText()));
+                mod.setIcms(Float.parseFloat(textIcms.getText()));
+                mod.setVlVenda(Float.parseFloat(textVlVenda.getText()));
+
+                dao.incluir(mod);
+                camposBotoesInicioCadastro();
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(null, "Preencha os campos obrigatÛrios!");
+            }
         }
     }
 
@@ -543,18 +545,11 @@ public final class CadProd extends javax.swing.JInternalFrame {
         conecta.rs = dao.buscar(mod);
         try {
             if (conecta.rs.next()) {
-                if (textId.getText().isEmpty() || textProduto.getText().isEmpty() || textTipoProd.getText().isEmpty()
-                        || textQtProd.getText().isEmpty() || textVlCompra.getText().isEmpty() || textIcms.getText().isEmpty()
-                        || textVlVenda.getText().isEmpty()) {
-                    JOptionPane.showMessageDialog(null, "Preencha os campos obrigatÛrios!");
-
-                } else {
-                    dao.alterar(mod);
-                    camposBotoesInicioCadastro();
-                }
+                dao.alterar(mod);
+                camposBotoesInicioCadastro();
             } else {
                 Object[] options = {"Sim", "N„o"};
-                int exUser = JOptionPane.showOptionDialog(null, "Modulo alterarProd\nProduto n„o cadastrado!\nDeseja fazer o cadastro?", "Aviso",
+                int exUser = JOptionPane.showOptionDialog(null, "Produto n„o cadastrado!\nDeseja fazer o cadastro?", "Aviso",
                         JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE,
                         null, options, options[0]);
                 if (exUser == 0) {
@@ -562,13 +557,11 @@ public final class CadProd extends javax.swing.JInternalFrame {
                     todosCamposAtivos();
                     botoesBtnUserRegister();
                     textId.grabFocus();
-
                 }
             }
         } catch (SQLException err) {
             JOptionPane.showMessageDialog(null,
                     "Modulo alterarProd/CadUserProd/view\nErro ao Alterar Produto!\n" + err.getMessage());
-
             camposBotoesInicioCadastro();
         }
     }
